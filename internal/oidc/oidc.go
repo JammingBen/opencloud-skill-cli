@@ -1,4 +1,4 @@
-package auth
+package oidc
 
 import (
 	"context"
@@ -14,7 +14,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/JammingBen/opencloud-skill-cli/internal/config"
 	"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 )
@@ -151,7 +150,7 @@ func (c *OIDCClient) Login() error {
 		}
 
 		// Save to config
-		cfg, err := config.Load()
+		cfg, err := LoadConfig()
 		if err != nil {
 			return err
 		}

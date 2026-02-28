@@ -1,4 +1,4 @@
-package config
+package oidc
 
 import (
 	"context"
@@ -28,8 +28,8 @@ func GetConfigPath() (string, error) {
 	return filepath.Join(home, ".config", "opencloud-cli", "config.json"), nil
 }
 
-// Load reads the configuration from the config file
-func Load() (*Config, error) {
+// LoadConfig reads the configuration from the config file
+func LoadConfig() (*Config, error) {
 	path, err := GetConfigPath()
 	if err != nil {
 		return nil, err

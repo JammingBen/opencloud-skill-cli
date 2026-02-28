@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/JammingBen/opencloud-skill-cli/internal/auth"
+	"github.com/JammingBen/opencloud-skill-cli/internal/oidc"
 	"github.com/spf13/cobra"
 )
 
@@ -13,7 +13,7 @@ var loginCmd = &cobra.Command{
 	Use:   "login",
 	Short: "Login to the OpenCloud server via OIDC",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		c := auth.NewOIDCClient(loginServerUrl, loginInsecure, loginClientID)
+		c := oidc.NewOIDCClient(loginServerUrl, loginInsecure, loginClientID)
 		if err := c.Login(); err != nil {
 			return err
 		}

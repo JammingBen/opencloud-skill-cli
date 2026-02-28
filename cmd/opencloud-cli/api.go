@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/JammingBen/opencloud-skill-cli/internal/config"
-	"github.com/JammingBen/opencloud-skill-cli/internal/http"
+	"github.com/JammingBen/opencloud-skill-cli/internal/client"
+	"github.com/JammingBen/opencloud-skill-cli/internal/oidc"
 	"github.com/spf13/cobra"
 )
 
@@ -18,7 +18,7 @@ var apiCmd = &cobra.Command{
 	Long:  "This command allows you to interact with the OpenCloud LibreGraph API.",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		// Load config
-		cfg, err := config.Load()
+		cfg, err := oidc.LoadConfig()
 		if err != nil {
 			return err
 		}
@@ -38,7 +38,7 @@ var apiCmd = &cobra.Command{
 		}
 
 		// Create client and make request to OpenCloud API
-		c := http.NewClient(cfg.ServerURL, cfg.Insecure, ts)
+		c := client.NewClient(cfg.ServerURL, cfg.Insecure, ts)
 		resp, err := c.MakeRequest(path, method)
 		if err != nil {
 			return err
