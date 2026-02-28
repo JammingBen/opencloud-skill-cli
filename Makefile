@@ -15,15 +15,11 @@ else
 	VERSION := $(EXACT_TAG)
 endif
 
-LDFLAGS := -ldflags "-X main.Version=$(VERSION)"
+LDFLAGS := -ldflags "-X github.com/JammingBen/opencloud-skill-cli/internal/version.Version=$(VERSION)"
 
 .PHONY: build
 build:
 	go build $(LDFLAGS) -o bin/oc-cli cmd/opencloud-cli/*.go
-
-.PHONY: run
-run:
-	go run $(LDFLAGS) cmd/opencloud-cli/*.go $(ARGS)
 
 .PHONY: login
 login:
@@ -36,3 +32,12 @@ logout:
 .PHONY: tidy
 tidy:
 	go mod tidy
+
+.PHONY: generate-skill
+generate-skill:
+	npx openapi-to-skills https://raw.githubusercontent.com/opencloud-eu/libre-graph-api/refs/heads/main/api/openapi-spec/v1.0.yaml -o ./output --name oc-libre-graph-api --exclude-paths /v1.0/education/users,/v1.0/education/users/{user-id},/v1.0/education/schools,/v1.0/education/schools/{school-id},/v1.0/education/schools/{school-id}/users,/v1.0/education/schools/{school-id}/users/$$ref,/v1.0/education/schools/{school-id}/users/{user-id}/$$ref,/v1.0/education/schools/{school-id}/classes,/v1.0/education/schools/{school-id}/classes/$$ref,/v1.0/education/schools/{school-id}/classes/{class-id}/$$ref,/v1.0/education/classes,/v1.0/education/classes/{class-id},/v1.0/education/classes/{class-id}/members,/v1.0/education/classes/{class-id}/members/$$ref,/v1.0/education/classes/{class-id}/members/{user-id}/$$ref,/v1.0/education/classes/{class-id}/teachers,/v1.0/education/classes/{class-id}/teachers/$$ref,/v1.0/education/classes/{class-id}/teachers/{user-id}/$$ref && \
+	rm -rf skills/opencloud-cli/references && \
+	mkdir -p skills/opencloud-cli/references && \
+	mv output/oc-libre-graph-api/references/operations skills/opencloud-cli/references && \
+	mv output/oc-libre-graph-api/references/resources skills/opencloud-cli/references && \
+	mv output/oc-libre-graph-api/references/schemas skills/opencloud-cli/references && rm -rf output

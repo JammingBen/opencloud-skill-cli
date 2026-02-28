@@ -26,6 +26,38 @@ oc-cli login
 
 ### Install Skill
 
+Install the skill so your local AI assistant or agent can use it to interact with OpenCloud. You can use the provided `install-skill` command, or download the skill manually from the [Github Releases page](https://github.com/JammingBen/opencloud-skill-cli/releases) (see the artifacts of a release).
+
 ```sh
-oc-cli install-skills
+oc-cli install-skill --agent=claude-code
+oc-cli install-skill --agent=github-copilot
+oc-cli install-skill --agent=codex
+oc-cli install-skill --agent=open-code
+oc-cli install-skill --agent=gemini-cli
+```
+
+## Development
+
+```sh
+# install Go dependencies
+make tidy
+
+# login to OpenCloud server
+make login # defaults to https://host.docker.internal:9200
+
+# OR:
+make login SERVER_URL=https://cloud.opencloud.eu # specify own URL
+
+# run cli
+go run cmd/opencloud-cli/*.go --help
+```
+
+### Generating skill reference data
+
+Generate the skill reference data using [openapi-to-skills](https://github.com/neutree-ai/openapi-to-skills/tree/main). This will generate markdown files for all resources, operations and schemas defined in the OpenAPI spec. The generated files will be moved to `skills/opencloud-cli/references`.
+
+Make sure you have `npx` installed.
+
+```sh
+make generate-skill
 ```

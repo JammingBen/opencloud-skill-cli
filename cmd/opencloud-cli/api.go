@@ -52,7 +52,7 @@ var apiCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(apiCmd)
-	apiCmd.Flags().StringVarP(&path, "path", "p", "/", "Path of the API endpoint")
+	apiCmd.Flags().StringVarP(&path, "path", "p", "", "Path of the API endpoint")
 	apiCmd.Flags().StringVarP(&method, "method", "m", "GET", "HTTP method to use")
 	apiCmd.MarkFlagRequired("path")
 }
