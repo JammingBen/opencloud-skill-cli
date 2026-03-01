@@ -14,6 +14,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/fatih/color"
 	"github.com/pkg/browser"
 	"golang.org/x/oauth2"
 )
@@ -113,7 +114,8 @@ func (c *OIDCClient) Login() error {
 	fmt.Printf("Client ID: %s\n", clientID)
 	fmt.Printf("Redirect URI: %s\n", redirectURL)
 	if err := browser.OpenURL(url); err != nil {
-		fmt.Printf("Failed to open browser: %v\n", err)
+		msg := color.RedString("Failed to open browser: %v", err)
+		fmt.Println(msg)
 		fmt.Printf("Please open this URL manually: %s\n", url)
 	}
 
@@ -163,7 +165,8 @@ func (c *OIDCClient) Login() error {
 			return err
 		}
 
-		fmt.Println("Successfully logged in!")
+		msg := color.GreenString("✓ Successfully logged in!")
+		fmt.Println(msg)
 		srv.Shutdown(ctx)
 		return nil
 	case err := <-errChan:

@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/url"
 
@@ -43,6 +44,7 @@ func (c *Client) MakeRequest(path string, method string) (string, error) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: c.insecure},
 	}
 
+	// Get token source for authentication
 	if c.tokenSource != nil {
 		token, err := c.tokenSource.Token()
 		if err != nil {
@@ -51,28 +53,42 @@ func (c *Client) MakeRequest(path string, method string) (string, error) {
 		req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 	}
 
+	slog.Debug("Making request", "method", method, "url", fullURL)
+
+	// Do request
 	client := &http.Client{Transport: tr}
 	resp, err := client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("failed to execute request: %w", err)
 	}
 
-	var respBody string
+	slog.Debug("Received response", "status", resp.StatusCode)
+
+	// Read and return response body
+	return readBody(resp)
+}
+
+// readBody reads the response body and returns it as a string.
+// It also checks for HTTP errors and returns an error if the status code is 400 or above.
+func readBody(resp *http.Response) (string, error) {
 	defer resp.Body.Close()
 
-	if resp.StatusCode == http.StatusOK {
-		bodyBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return "", fmt.Errorf("failed to read response body: %w", err)
-		}
-		dst := &bytes.Buffer{}
-		if err := json.Indent(dst, bodyBytes, "", "  "); err != nil {
-			return "", err
-		}
-		respBody = dst.String()
-	} else {
+	if resp.StatusCode >= 400 {
 		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
-	return respBody, nil
+	if resp.Body == nil {
+		return "", nil
+	}
+
+	bodyBytes, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("failed to read response body: %w", err)
+	}
+	dst := &bytes.Buffer{}
+	if err := json.Indent(dst, bodyBytes, "", "  "); err != nil {
+		return "", err
+	}
+
+	return dst.String(), nil
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/JammingBen/opencloud-skill-cli/internal/oidc"
+	"github.com/fatih/color"
 	"github.com/spf13/cobra"
 )
 
@@ -20,7 +21,8 @@ var logoutCmd = &cobra.Command{
 			return fmt.Errorf("failed to clear session: %w", err)
 		}
 
-		fmt.Println("Successfully logged out and cleared session.")
+		msg := color.GreenString("✓ Successfully logged out and cleared session.")
+		fmt.Println(msg)
 		return nil
 	},
 }
