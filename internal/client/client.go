@@ -28,7 +28,7 @@ func NewClient(baseURL string, insecure bool, ts oauth2.TokenSource) *Client {
 }
 
 // MakeRequest makes an HTTP request to the specified URL with the given method and returns the response
-func (c *Client) MakeRequest(path string, method string) (string, error) {
+func (c *Client) MakeRequest(path string, method string, body string) (string, error) {
 	fullURL, err := url.JoinPath(c.baseURL, "graph", path)
 	if err != nil {
 		return "", fmt.Errorf("failed to join path: %w", err)
@@ -51,6 +51,12 @@ func (c *Client) MakeRequest(path string, method string) (string, error) {
 			return "", fmt.Errorf("failed to get token: %w", err)
 		}
 		req.Header.Set("Authorization", "Bearer "+token.AccessToken)
+	}
+
+	// Add body if provided
+	if body != "" {
+		req.Body = io.NopCloser(bytes.NewBufferString(body))
+		req.Header.Set("Content-Type", "application/json")
 	}
 
 	slog.Debug("Making request", "method", method, "url", fullURL)

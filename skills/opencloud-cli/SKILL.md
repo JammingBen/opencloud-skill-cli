@@ -13,7 +13,7 @@ Use the `oc-cli` command to interact with the OpenCloud CLI. The `references` di
 
 ```sh
 # general usage
-oc-cli api -p <path> -m <method> -d <data>
+oc-cli api -p <path> -m <method> -b <body>
 
 # help
 oc-cli api --help
@@ -21,7 +21,7 @@ oc-cli api --help
 # examples
 oc-cli api -p /v1beta1/me/drives -m GET # list all my drives
 oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m GET # get a drive by its id
-oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m PATCH -d '{"name": "New Drive Name"}' # update a drive
+oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m PATCH -b '{"name": "New Drive Name"}' # update a drive
 
 ```
 

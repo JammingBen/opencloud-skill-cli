@@ -13,6 +13,7 @@ import (
 
 var path string
 var method string
+var body string
 var verbose bool
 
 var apiCmd = &cobra.Command{
@@ -49,7 +50,7 @@ var apiCmd = &cobra.Command{
 
 		// Create client and make request to OpenCloud API
 		c := client.NewClient(cfg.ServerURL, cfg.Insecure, ts)
-		resp, err := c.MakeRequest(path, method)
+		resp, err := c.MakeRequest(path, method, body)
 		if err != nil {
 			return fmt.Errorf("error making request: %w", err)
 		}
@@ -64,6 +65,7 @@ func init() {
 	rootCmd.AddCommand(apiCmd)
 	apiCmd.Flags().StringVarP(&path, "path", "p", "", "Path of the API endpoint")
 	apiCmd.Flags().StringVarP(&method, "method", "m", "GET", "HTTP method to use")
+	apiCmd.Flags().StringVarP(&body, "body", "b", "", "JSON body to send with the request")
 	apiCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
 	apiCmd.MarkFlagRequired("path")
 }
