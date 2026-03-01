@@ -1,6 +1,6 @@
 # opencloud-skill-cli
 
-An [OpenCloud](https://opencloud.eu) CLI application that can be used by local AI assistants and agents via skills. It allows AI to interact with OpenCloud resources and perform various operations.
+An [OpenCloud](https://opencloud.eu) CLI application that can be used by local AI assistants and agents via skills. It allows AI to interact with OpenCloud resources using the [LibreGraph API](https://github.com/opencloud-eu/libre-graph-api).
 
 ### Features
 
@@ -23,7 +23,13 @@ go install github.com/JammingBen/opencloud-skill-cli
 You need to login to your OpenCloud server to use the CLI or the skill. You can do this using the `login` command:
 
 ```sh
-oc-cli login
+oc-cli login -s https://your-opencloud-server.com
+```
+
+When working with a local server that uses self-signed certificates, you can use the `--insecure` flag to skip TLS verification:
+
+```sh
+oc-cli login -s https://host.docker.internal:9200 --insecure
 ```
 
 ### Install Skill
@@ -56,10 +62,16 @@ go run cmd/oc-cli/*.go --help
 
 ### Generating skill reference data
 
-Skill reference data can be generated using [openapi-to-skills](https://github.com/neutree-ai/openapi-to-skills/tree/main). This will generate markdown files for all resources, operations and schemas defined in the [OpenAPI spec](https://github.com/opencloud-eu/libre-graph-api/blob/main/api/openapi-spec/v1.0.yaml). The generated files will be moved to `skills/opencloud-cli/references`.
+Skill reference data can be generated using [openapi-to-skills](https://github.com/neutree-ai/openapi-to-skills/tree/main). This will generate markdown files for all resources, operations and schemas defined in the [OpenCloud OpenAPI spec](https://github.com/opencloud-eu/libre-graph-api/blob/main/api/openapi-spec/v1.0.yaml). The generated files will be moved to `skills/opencloud-cli/references`.
 
 Make sure you have `npx` installed.
 
 ```sh
 make generate-skill-references
 ```
+
+## Why not use an MCP server?
+
+The OpenCloud CLI is designed to offer a simple and efficient way for local AI assistants and agents to interact with OpenCloud resources. It does not require the overhead of running an MCP server, and can be easily installed and used on any machine.
+
+Additionally, skills are usually more efficient than MCP servers in terms of token usage because they don't need to retrieve tool definitions initially. The CLI's skill reference structure as well as the TOON format used for responses allow for efficient retrieval of necessary information.
