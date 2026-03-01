@@ -32,13 +32,19 @@ func NewClient(baseURL string, insecure bool, ts oauth2.TokenSource) *Client {
 }
 
 // MakeRequest makes an HTTP request to the specified URL with the given method and body and returns the response
-func (c *Client) MakeRequest(path string, method string, body string) (*Response, error) {
+func (c *Client) MakeRequest(path string, method string, body string, params url.Values) (*Response, error) {
 	fullURL, err := url.JoinPath(c.baseURL, "graph", path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to join path: %w", err)
 	}
 
-	req, err := http.NewRequest(method, fullURL, nil)
+	u, err := url.Parse(fullURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse URL: %w", err)
+	}
+	u.RawQuery = params.Encode()
+
+	req, err := http.NewRequest(method, u.String(), nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
@@ -63,7 +69,7 @@ func (c *Client) MakeRequest(path string, method string, body string) (*Response
 		req.Header.Set("Content-Type", "application/json")
 	}
 
-	slog.Debug("Making request", "method", method, "url", fullURL)
+	slog.Debug("Making request", "method", method, "url", u.String())
 
 	// Do request
 	client := &http.Client{Transport: tr}

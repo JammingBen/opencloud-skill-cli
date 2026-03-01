@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"net/url"
+	"strings"
 
 	"github.com/JammingBen/opencloud-skill-cli/internal/client"
 	"github.com/JammingBen/opencloud-skill-cli/internal/logger"
@@ -14,6 +16,7 @@ import (
 var path string
 var method string
 var body string
+var queryParams []string
 var verbose bool
 var statusOnly bool
 var jsonFormat bool
@@ -50,9 +53,20 @@ var apiCmd = &cobra.Command{
 			return fmt.Errorf("Access token is not configured. Please run 'occ login' first.")
 		}
 
+		// Parse query params
+		params := url.Values{}
+		for _, qp := range queryParams {
+			parts := strings.SplitN(qp, "=", 2)
+			if len(parts) == 2 {
+				params.Add(parts[0], parts[1])
+			} else {
+				params.Add(parts[0], "")
+			}
+		}
+
 		// Create client and make request to OpenCloud API
 		c := client.NewClient(cfg.ServerURL, cfg.Insecure, ts)
-		resp, err := c.MakeRequest(path, method, body)
+		resp, err := c.MakeRequest(path, method, body, params)
 		if err != nil {
 			return fmt.Errorf("error making request: %w", err)
 		}
@@ -90,6 +104,7 @@ func init() {
 	apiCmd.Flags().StringVarP(&path, "path", "p", "", "Path of the API endpoint")
 	apiCmd.Flags().StringVarP(&method, "method", "m", "GET", "HTTP method to use")
 	apiCmd.Flags().StringVarP(&body, "body", "b", "", "JSON body to send with the request")
+	apiCmd.Flags().StringArrayVarP(&queryParams, "query", "q", []string{}, "Query parameters to add to the request (e.g. -q key=value)")
 	apiCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
 	apiCmd.Flags().BoolVar(&statusOnly, "status-only", false, "Only return the status code")
 	apiCmd.Flags().BoolVar(&jsonFormat, "json-format", false, "Encode the output in JSON format")
