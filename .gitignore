@@ -12,3 +12,5 @@ go.work
 go.work.sum
 
 skills/opencloud-cli/references
+
+.DS_Store

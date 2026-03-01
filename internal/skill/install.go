@@ -1,15 +1,10 @@
 package skill
 
 import (
-	"archive/zip"
-	"bytes"
 	"fmt"
-	"io"
-	"net/http"
+	"io/fs"
 	"os"
 	"path/filepath"
-
-	"github.com/JammingBen/opencloud-skill-cli/internal/version"
 )
 
 const CLAUDE_CODE_DIR = ".claude/skills"
@@ -18,78 +13,54 @@ const CODEX_SKILL_DIR = ".agents/skills"
 const OPEN_CODE_SKILL_DIR = ".config/opencode/skills"
 const GEMINI_SKILL_DIR = ".gemini/skills"
 
-// InstallSkill downloads the skill zip from GitHub, extracts it, and saves it to the appropriate directory based on the agent
-func InstallSkill(agent string) error {
-	c := http.Client{}
-
-	req, _ := http.NewRequest("GET", getZipUrl(), nil)
-	resp, err := c.Do(req)
+// InstallSkill installs the skill from the embedded filesystem for the appropriate directory based on the agent
+func InstallSkill(agent string, embedFS fs.FS) error {
+	destDir, err := getAgentSkillDir(agent)
 	if err != nil {
 		return err
 	}
 
-	defer resp.Body.Close()
-	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("failed to download skill: %s", resp.Status)
-	}
+	// The source path "skills" matches //go:embed directive in embed.go
+	return CopyFS(embedFS, "skills", destDir)
+}
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return fmt.Errorf("failed to read response body: %w", err)
-	}
-
-	zipReader, err := zip.NewReader(bytes.NewReader(body), int64(len(body)))
-	if err != nil {
-		return fmt.Errorf("failed to create zip reader: %w", err)
-	}
-
-	for _, f := range zipReader.File {
-		path, err := getSkillDirPath(agent, f)
+// CopyFS copies an embedded filesystem to a local directory
+func CopyFS(embedFS fs.FS, srcDir, destDir string) error {
+	return fs.WalkDir(embedFS, srcDir, func(path string, d fs.DirEntry, err error) error {
 		if err != nil {
 			return err
 		}
 
-		if f.FileInfo().IsDir() {
-			if err := os.MkdirAll(path, os.ModePerm); err != nil {
-				return fmt.Errorf("failed to create directory %s: %w", path, err)
-			}
-			continue
-		}
-
-		if err := os.MkdirAll(filepath.Dir(path), os.ModePerm); err != nil {
-			return fmt.Errorf("failed to create parent directory for %s: %w", path, err)
-		}
-
-		dstFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, f.Mode())
+		// Determine the relative path from the source directory
+		relPath, err := filepath.Rel(srcDir, path)
 		if err != nil {
-			return fmt.Errorf("failed to open destination file %s: %w", path, err)
+			return err
 		}
 
-		srcFile, err := f.Open()
+		targetPath := filepath.Join(destDir, relPath)
+
+		if d.IsDir() {
+			return os.MkdirAll(targetPath, 0755)
+		}
+
+		// Read the file from the embedded FS
+		data, err := fs.ReadFile(embedFS, path)
 		if err != nil {
-			dstFile.Close()
-			return fmt.Errorf("failed to open file in zip %s: %w", f.Name, err)
+			return err
 		}
 
-		_, err = io.Copy(dstFile, srcFile)
-		srcFile.Close()
-		dstFile.Close()
-		if err != nil {
-			return fmt.Errorf("failed to copy content to %s: %w", path, err)
+		// Ensure parent directory exists (already covered by d.IsDir() check for most cases, but safe for root files)
+		if err := os.MkdirAll(filepath.Dir(targetPath), 0755); err != nil {
+			return err
 		}
-	}
 
-	return nil
+		// Write the file to the local FS
+		return os.WriteFile(targetPath, data, 0644)
+	})
 }
 
-// getZipUrl constructs the URL to download the skill zip based on the current version
-func getZipUrl() string {
-	v := version.GetVersionWithoutSuffix()
-	return fmt.Sprintf("https://github.com/JammingBen/opencloud-skill-cli/releases/download/v%s/skill.zip", v)
-}
-
-// getSkillDirPath returns the appropriate skill directory path based on the agent and the file in the zip
-func getSkillDirPath(agent string, f *zip.File) (string, error) {
+// getAgentSkillDir returns the appropriate skill directory base path based on the agent
+func getAgentSkillDir(agent string) (string, error) {
 	userHomeDir, err := os.UserHomeDir()
 	if err != nil {
 		return "", fmt.Errorf("failed to get user home directory: %w", err)
@@ -98,15 +69,15 @@ func getSkillDirPath(agent string, f *zip.File) (string, error) {
 	var skillDir string
 	switch agent {
 	case "claude-code":
-		skillDir = filepath.Join(userHomeDir, CLAUDE_CODE_DIR, f.Name)
+		skillDir = filepath.Join(userHomeDir, CLAUDE_CODE_DIR)
 	case "github-copilot":
-		skillDir = filepath.Join(userHomeDir, GITHUB_COPILOT_SKILL_DIR, f.Name)
+		skillDir = filepath.Join(userHomeDir, GITHUB_COPILOT_SKILL_DIR)
 	case "codex":
-		skillDir = filepath.Join(userHomeDir, CODEX_SKILL_DIR, f.Name)
+		skillDir = filepath.Join(userHomeDir, CODEX_SKILL_DIR)
 	case "open-code":
-		skillDir = filepath.Join(userHomeDir, OPEN_CODE_SKILL_DIR, f.Name)
+		skillDir = filepath.Join(userHomeDir, OPEN_CODE_SKILL_DIR)
 	case "gemini-cli":
-		skillDir = filepath.Join(userHomeDir, GEMINI_SKILL_DIR, f.Name)
+		skillDir = filepath.Join(userHomeDir, GEMINI_SKILL_DIR)
 	default:
 		return "", fmt.Errorf("unsupported agent: %s", agent)
 	}
