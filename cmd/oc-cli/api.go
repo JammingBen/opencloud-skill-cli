@@ -13,13 +13,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var path string
-var method string
-var body string
-var queryParams []string
-var verbose bool
-var statusOnly bool
-var jsonFormat bool
+var (
+	path        string
+	method      string
+	body        string
+	queryParams []string
+	verbose     bool
+	statusOnly  bool
+	jsonFormat  bool
+)
 
 var apiCmd = &cobra.Command{
 	Use:   "api",
