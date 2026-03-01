@@ -21,6 +21,11 @@ LDFLAGS := -ldflags "-X github.com/JammingBen/opencloud-skill-cli/internal/versi
 build:
 	go build $(LDFLAGS) -o bin/oc-cli cmd/oc-cli/*.go
 
+.PHONY release
+release: build
+	goreleaser release
+	rm -rf dist
+
 .PHONY: install
 install:
 	go install ./cmd/oc-cli
