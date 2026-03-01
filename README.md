@@ -1,6 +1,6 @@
 # opencloud-skill-cli
 
-An OpenCloud CLI application that can be used by local AI assistants and agents via skills. It allows AI to interact with OpenCloud resources and perform various operations.
+An [OpenCloud](https://opencloud.eu) CLI application that can be used by local AI assistants and agents via skills. It allows AI to interact with OpenCloud resources and perform various operations.
 
 ### Features
 
@@ -10,17 +10,19 @@ An OpenCloud CLI application that can be used by local AI assistants and agents 
 - Authentication with OpenCloud using OIDC.
 - Single binary application for easy installation and usage.
 
-### Requirements
-
-- Go 1.24 or later
-- Claude Code, GitHub Copilot, or any other local coding agent.
-
 ## Getting started
 
 ### Install CLI
 
 ```sh
 go install github.com/JammingBen/opencloud-skill-cli
+```
+
+### Login
+
+You need to login to your OpenCloud server to use the CLI or the skill. You can do this using the `login` command:
+
+```sh
 oc-cli login
 ```
 
