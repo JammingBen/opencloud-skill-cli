@@ -19,15 +19,19 @@ LDFLAGS := -ldflags "-X github.com/JammingBen/opencloud-skill-cli/internal/versi
 
 .PHONY: build
 build:
-	go build $(LDFLAGS) -o bin/oc-cli cmd/opencloud-cli/*.go
+	go build $(LDFLAGS) -o bin/oc-cli cmd/oc-cli/*.go
+
+.PHONY: install
+install:
+	go install ./cmd/oc-cli
 
 .PHONY: login
 login:
-	go run $(LDFLAGS) cmd/opencloud-cli/*.go login --server-url $(SERVER_URL) --insecure
+	go run $(LDFLAGS) cmd/oc-cli/*.go login --server-url $(SERVER_URL) --insecure
 
 .PHONY: logout
 logout:
-	go run $(LDFLAGS) cmd/opencloud-cli/*.go logout
+	go run $(LDFLAGS) cmd/oc-cli/*.go logout
 
 .PHONY: tidy
 tidy:

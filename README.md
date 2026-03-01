@@ -49,7 +49,7 @@ make login # defaults to https://host.docker.internal:9200
 make login SERVER_URL=https://cloud.opencloud.eu # specify own URL
 
 # run cli
-go run cmd/opencloud-cli/*.go --help
+go run cmd/oc-cli/*.go --help
 ```
 
 ### Generating skill reference data
