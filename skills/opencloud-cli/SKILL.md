@@ -7,7 +7,7 @@ description: 'Manage files, folders and spaces of an OpenCloud server using the 
 
 ## How to Use This Skill
 
-Use the `oc-cli` command to interact with the OpenCloud CLI. The `references` directory contains detailed documentation for all available resources and operations.
+Use the `oc-cli` command to interact with the OpenCloud CLI. The `references` directory contains detailed documentation for all available resources and operations. Responses get returned in TOON format.
 
 ### Examples
 
@@ -21,7 +21,7 @@ oc-cli api --help
 # examples
 oc-cli api -p /v1beta1/me/drives -m GET # list all my drives
 oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m GET # get a drive by its id
-oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m PATCH -b '{"name": "New Drive Name"}' # update a drive
+oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m PATCH -b '{"name": "New Drive Name"}' --status-only # update a drive
 
 ```
 
@@ -76,3 +76,4 @@ references/
 ## General tips
 
 - prefer the `v1beta1` endpoints over the `v1.0` endpoints
+- use the `--status-only` flag when the response body is not needed, e.g. for update and delete operations

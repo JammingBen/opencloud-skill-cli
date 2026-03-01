@@ -3,6 +3,7 @@ module github.com/JammingBen/opencloud-skill-cli
 go 1.25.0
 
 require (
+	github.com/alpkeskin/gotoon v0.1.1
 	github.com/fatih/color v1.18.0
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
 	github.com/spf13/cobra v1.10.2

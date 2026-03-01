@@ -15,6 +15,8 @@ var path string
 var method string
 var body string
 var verbose bool
+var statusOnly bool
+var jsonFormat bool
 
 var apiCmd = &cobra.Command{
 	Use:   "api",
@@ -55,8 +57,30 @@ var apiCmd = &cobra.Command{
 			return fmt.Errorf("error making request: %w", err)
 		}
 
+		// Set up encoder
+		encodingFormat := client.TOON
+		if jsonFormat {
+			encodingFormat = client.JSON
+		}
+		e := client.NewEncoder(encodingFormat)
+
 		// Print output
-		fmt.Println(resp)
+		if statusOnly {
+			output, err := e.EncodeStatusCode(resp.StatusCode)
+			if err != nil {
+				return fmt.Errorf("failed to encode status code: %w", err)
+			}
+
+			fmt.Println(output)
+			return nil
+		}
+
+		output, err := e.EncodeBody(resp.Body)
+		if err != nil {
+			return fmt.Errorf("failed to encode response body: %w", err)
+		}
+
+		fmt.Println(output)
 		return nil
 	},
 }
@@ -67,5 +91,7 @@ func init() {
 	apiCmd.Flags().StringVarP(&method, "method", "m", "GET", "HTTP method to use")
 	apiCmd.Flags().StringVarP(&body, "body", "b", "", "JSON body to send with the request")
 	apiCmd.Flags().BoolVarP(&verbose, "verbose", "v", false, "Enable verbose output")
+	apiCmd.Flags().BoolVar(&statusOnly, "status-only", false, "Only return the status code")
+	apiCmd.Flags().BoolVar(&jsonFormat, "json-format", false, "Encode the output in JSON format")
 	apiCmd.MarkFlagRequired("path")
 }

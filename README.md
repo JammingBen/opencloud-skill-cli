@@ -5,9 +5,9 @@ An OpenCloud CLI application that can be used by local AI assistants and agents 
 ### Features
 
 - Seamless integration with local AI assistants and agents via skills.
-- Efficient agent token usage, especially compared to tools from MCP servers.
+- Efficient agent token usage thanks to TOON and skill reference data.
 - Fetching and managing OpenCloud resources.
-- Authentication with OpenCloud using OAuth2.
+- Authentication with OpenCloud using OIDC.
 - Single binary application for easy installation and usage.
 
 ### Requirements

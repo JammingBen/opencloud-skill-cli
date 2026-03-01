@@ -3,7 +3,6 @@ package client
 import (
 	"bytes"
 	"crypto/tls"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log/slog"
@@ -19,6 +18,11 @@ type Client struct {
 	tokenSource oauth2.TokenSource
 }
 
+type Response struct {
+	StatusCode int
+	Body       string
+}
+
 func NewClient(baseURL string, insecure bool, ts oauth2.TokenSource) *Client {
 	return &Client{
 		baseURL:     baseURL,
@@ -27,16 +31,16 @@ func NewClient(baseURL string, insecure bool, ts oauth2.TokenSource) *Client {
 	}
 }
 
-// MakeRequest makes an HTTP request to the specified URL with the given method and returns the response
-func (c *Client) MakeRequest(path string, method string, body string) (string, error) {
+// MakeRequest makes an HTTP request to the specified URL with the given method and body and returns the response
+func (c *Client) MakeRequest(path string, method string, body string) (*Response, error) {
 	fullURL, err := url.JoinPath(c.baseURL, "graph", path)
 	if err != nil {
-		return "", fmt.Errorf("failed to join path: %w", err)
+		return nil, fmt.Errorf("failed to join path: %w", err)
 	}
 
 	req, err := http.NewRequest(method, fullURL, nil)
 	if err != nil {
-		return "", fmt.Errorf("failed to create request: %w", err)
+		return nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	// Set up http transport
@@ -48,7 +52,7 @@ func (c *Client) MakeRequest(path string, method string, body string) (string, e
 	if c.tokenSource != nil {
 		token, err := c.tokenSource.Token()
 		if err != nil {
-			return "", fmt.Errorf("failed to get token: %w", err)
+			return nil, fmt.Errorf("failed to get token: %w", err)
 		}
 		req.Header.Set("Authorization", "Bearer "+token.AccessToken)
 	}
@@ -65,36 +69,39 @@ func (c *Client) MakeRequest(path string, method string, body string) (string, e
 	client := &http.Client{Transport: tr}
 	resp, err := client.Do(req)
 	if err != nil {
-		return "", fmt.Errorf("failed to execute request: %w", err)
+		return nil, fmt.Errorf("failed to execute request: %w", err)
 	}
 
 	slog.Debug("Received response", "status", resp.StatusCode)
 
-	// Read and return response body
+	if resp.StatusCode >= 400 {
+		return nil, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	}
+
 	return readBody(resp)
 }
 
-// readBody reads the response body and returns it as a string.
-// It also checks for HTTP errors and returns an error if the status code is 400 or above.
-func readBody(resp *http.Response) (string, error) {
+// readBody reads the response and returns a Response struct containing the status code and body as a string
+func readBody(resp *http.Response) (*Response, error) {
 	defer resp.Body.Close()
 
-	if resp.StatusCode >= 400 {
-		return "", fmt.Errorf("unexpected status code: %d", resp.StatusCode)
+	r := &Response{
+		StatusCode: resp.StatusCode,
 	}
 
 	if resp.Body == nil {
-		return "", nil
+		return r, nil
 	}
 
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("failed to read response body: %w", err)
-	}
-	dst := &bytes.Buffer{}
-	if err := json.Indent(dst, bodyBytes, "", "  "); err != nil {
-		return "", err
+		return r, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	return dst.String(), nil
+	if len(bodyBytes) == 0 {
+		return r, nil
+	}
+
+	r.Body = string(bodyBytes)
+	return r, nil
 }
