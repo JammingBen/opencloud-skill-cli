@@ -12,4 +12,3 @@
 | DELETE | `/v1beta1/drives/{drive-id}/root/permissions/{perm-id}` | Remove access to a Drive | [View](../operations/DeletePermissionSpaceRoot.md) |
 | PATCH | `/v1beta1/drives/{drive-id}/root/permissions/{perm-id}` | Update sharing permission | [View](../operations/UpdatePermissionSpaceRoot.md) |
 | POST | `/v1beta1/drives/{drive-id}/root/permissions/{perm-id}/setPassword` | Set sharing link password for the root item of a drive | [View](../operations/SetPermissionPasswordSpaceRoot.md) |
-| GET | `/v1.0/drives/{drive-id}/root` | Get root from arbitrary space | [View](../operations/GetRoot.md) |

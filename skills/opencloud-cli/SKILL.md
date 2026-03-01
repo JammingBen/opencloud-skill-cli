@@ -25,6 +25,12 @@ oc-cli api -p /v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90 -m PATCH -b '{"n
 
 ```
 
+## Guidelines
+
+- **Conciseness**: Do not explain how to use the `oc-cli` command or the CLI itself in your responses.
+- **Direct Action**: Focus on delivering the results of the operations directly.
+- **No Usage Instructions**: Do not provide code examples or usage instructions for the CLI unless explicitly asked.
+
 ## Directory structure
 
 ```
@@ -77,3 +83,4 @@ references/
 
 - prefer the `v1beta1` endpoints over the `v1.0` endpoints
 - use the `--status-only` flag when the response body is not needed, e.g. for update and delete operations
+- use `/v1.0/me/drive/root/children` to list all items in the root of the personal drive/space
