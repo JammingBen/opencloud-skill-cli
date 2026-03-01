@@ -33,8 +33,8 @@ logout:
 tidy:
 	go mod tidy
 
-.PHONY: generate-skill
-generate-skill:
+.PHONY: generate-skill-references
+generate-skill-references:
 	npx openapi-to-skills https://raw.githubusercontent.com/opencloud-eu/libre-graph-api/refs/heads/main/api/openapi-spec/v1.0.yaml -o ./output --name oc-libre-graph-api --exclude-paths /v1.0/education/users,/v1.0/education/users/{user-id},/v1.0/education/schools,/v1.0/education/schools/{school-id},/v1.0/education/schools/{school-id}/users,/v1.0/education/schools/{school-id}/users/$$ref,/v1.0/education/schools/{school-id}/users/{user-id}/$$ref,/v1.0/education/schools/{school-id}/classes,/v1.0/education/schools/{school-id}/classes/$$ref,/v1.0/education/schools/{school-id}/classes/{class-id}/$$ref,/v1.0/education/classes,/v1.0/education/classes/{class-id},/v1.0/education/classes/{class-id}/members,/v1.0/education/classes/{class-id}/members/$$ref,/v1.0/education/classes/{class-id}/members/{user-id}/$$ref,/v1.0/education/classes/{class-id}/teachers,/v1.0/education/classes/{class-id}/teachers/$$ref,/v1.0/education/classes/{class-id}/teachers/{user-id}/$$ref && \
 	rm -rf skills/opencloud-cli/references && \
 	mkdir -p skills/opencloud-cli/references && \

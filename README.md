@@ -54,10 +54,10 @@ go run cmd/opencloud-cli/*.go --help
 
 ### Generating skill reference data
 
-Generate the skill reference data using [openapi-to-skills](https://github.com/neutree-ai/openapi-to-skills/tree/main). This will generate markdown files for all resources, operations and schemas defined in the OpenAPI spec. The generated files will be moved to `skills/opencloud-cli/references`.
+Skill reference data can be generated using [openapi-to-skills](https://github.com/neutree-ai/openapi-to-skills/tree/main). This will generate markdown files for all resources, operations and schemas defined in the [OpenAPI spec](https://github.com/opencloud-eu/libre-graph-api/blob/main/api/openapi-spec/v1.0.yaml). The generated files will be moved to `skills/opencloud-cli/references`.
 
 Make sure you have `npx` installed.
 
 ```sh
-make generate-skill
+make generate-skill-references
 ```
