@@ -15,7 +15,14 @@ An [OpenCloud](https://opencloud.eu) CLI application that can be used by local A
 ### Install CLI
 
 ```sh
-go install github.com/JammingBen/opencloud-skill-cli
+curl -sSL https://raw.githubusercontent.com/JammingBen/opencloud-skill-cli/main/install.sh | bash
+```
+
+Or build from source:
+
+```sh
+git clone git@github.com:JammingBen/opencloud-skill-cli.git
+make install
 ```
 
 ### Login
