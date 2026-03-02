@@ -26,6 +26,14 @@ You need to login to your OpenCloud server to use the CLI or the skill. You can 
 oc-cli login -s https://your-opencloud-server.com
 ```
 
+This will store the token in a config file in your user directory. If you don't want the token to be stored, you can use the `OC_ACCESS_TOKEN` env variable to provide the token directly.
+
+```sh
+oc-cli login -s https://your-opencloud-server.com --clipboard
+export OC_ACCESS_TOKEN=paste-your-token
+# run your agent or assistant that uses the skill...
+```
+
 When working with a local server that uses self-signed certificates, you can use the `--insecure` flag to skip TLS verification:
 
 ```sh

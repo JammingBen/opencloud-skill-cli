@@ -80,17 +80,14 @@ func (c *Config) Clear() error {
 	return c.Save()
 }
 
-// GetAccessToken returns the access token from the config, or an empty string if not set
-func (c *Config) GetAccessToken() string {
-	if c.Token == nil {
-		return ""
-	}
-	return c.Token.AccessToken
-}
-
 // GetTokenSource returns an oauth2.TokenSource that automatically refreshes the token and saves it back to the config file.
 func (c *Config) GetTokenSource(ctx context.Context) (oauth2.TokenSource, error) {
 	if c.Token == nil || c.ClientID == "" || c.TokenEndpoint == "" {
+		// Fall back to token from the environment
+		t, _ := os.LookupEnv("OC_ACCESS_TOKEN")
+		if t != "" {
+			return oauth2.StaticTokenSource(&oauth2.Token{AccessToken: t}), nil
+		}
 		return nil, nil
 	}
 

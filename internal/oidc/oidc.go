@@ -16,6 +16,7 @@ import (
 
 	"github.com/fatih/color"
 	"github.com/pkg/browser"
+	"golang.design/x/clipboard"
 	"golang.org/x/oauth2"
 )
 
@@ -38,17 +39,19 @@ type OIDCMetadata struct {
 }
 
 type OIDCClient struct {
-	ServerURL string
-	Insecure  bool
-	ClientID  string
+	ServerURL    string
+	ClientID     string
+	Insecure     bool
+	UseClipboard bool
 }
 
 // NewOIDCClient creates a new OIDCClient with the given parameters.
-func NewOIDCClient(serverURL string, insecure bool, clientID string) *OIDCClient {
+func NewOIDCClient(serverURL string, insecure bool, clientID string, useClipboard bool) *OIDCClient {
 	return &OIDCClient{
-		ServerURL: serverURL,
-		Insecure:  insecure,
-		ClientID:  clientID,
+		ServerURL:    serverURL,
+		ClientID:     clientID,
+		Insecure:     insecure,
+		UseClipboard: useClipboard,
 	}
 }
 
@@ -157,16 +160,27 @@ func (c *OIDCClient) Login() error {
 			return err
 		}
 		cfg.ServerURL = c.ServerURL
-		cfg.Token = token
 		cfg.Insecure = c.Insecure
 		cfg.ClientID = clientID
 		cfg.TokenEndpoint = endpoints.TokenEndpoint
+
+		if c.UseClipboard {
+			if err := copyToClipboard(token.AccessToken); err != nil {
+				return fmt.Errorf("failed to copy token to clipboard: %w", err)
+			}
+		} else {
+			cfg.Token = token
+		}
+
 		if err := cfg.Save(); err != nil {
 			return err
 		}
 
 		msg := color.GreenString("✓ Successfully logged in!")
 		fmt.Println(msg)
+		if c.UseClipboard {
+			fmt.Println("The access token has been copied to your clipboard.")
+		}
 		srv.Shutdown(ctx)
 		return nil
 	case err := <-errChan:
@@ -246,4 +260,12 @@ func generatePKCE() (verifier string, challenge string, err error) {
 	challenge = base64.RawURLEncoding.EncodeToString(h.Sum(nil))
 
 	return verifier, challenge, nil
+}
+
+func copyToClipboard(text string) error {
+	if err := clipboard.Init(); err != nil {
+		return fmt.Errorf("failed to initialize clipboard: %w", err)
+	}
+	clipboard.Write(clipboard.FmtText, []byte(text))
+	return nil
 }

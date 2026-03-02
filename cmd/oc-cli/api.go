@@ -52,7 +52,7 @@ var apiCmd = &cobra.Command{
 			return err
 		}
 		if ts == nil {
-			return fmt.Errorf("Access token is not configured. Please run 'occ login' first.")
+			return fmt.Errorf("Access token not found. Please run 'occ login' first.")
 		}
 
 		// Parse query params
