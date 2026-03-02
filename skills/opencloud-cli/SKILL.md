@@ -15,13 +15,13 @@ Use the `oc-cli api` command to interact with the API. The `references` director
 
 ```sh
 # list all my drives (v1beta1)
-oc-cli api -p "/v1beta1/me/drives" -m GET
+oc-cli api -p '/v1beta1/me/drives' -m GET
 
 # get a specific drive by id (v1.0)
-oc-cli api -p "/v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90" -m GET
+oc-cli api -p '/v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90' -m GET
 
 # update a drive name (v1.0) and only return status
-oc-cli api -p "/v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90" -m PATCH -b '{"name": "New Name"}' --status-only
+oc-cli api -p '/v1.0/drives/90eedea1-dea1-90ee-a1de-ee90a1deee90' -m PATCH -b '{"name": "New Name"}' --status-only
 
 # help
 oc-cli api --help
@@ -38,19 +38,24 @@ oc-cli api --help
 ### Technical Requirements
 
 - **Versioning**: **Always prefer `v1beta1`** endpoints over `v1.0` if both are available.
-- **Shell Safety**: Always wrap API paths in double quotes (e.g., `"/v1.0/me/..."`).
+- **Shell Safety**: Always wrap API paths and body data in single quotes (e.g., `-p '/v1.0/me' -b '{"name": "foo"}'`).
 - **Optimization**: Use the `--status-only` flag when the response body isn't needed (e.g., DELETE, or PATCH when only confirmation is required).
 - **Recipient Type**: When inviting users or groups by `objectId`, the `@libre.graph.recipient.type` property **must** be set to either `"user"` or `"group"`.
+- **Link Passwords**: If creating links fails with an error stating that password protection is enforced, provide a password via the `password` field (8+ characters, including uppercase, lowercase, numbers, and special characters).
 
 ### Workflow Patterns & Tips
 
 - **Search-Then-Act**: If an operation requires an `objectId` (e.g. for a user or group when creating a space member or share) that you don't have, search for it first:
-  - `-p "/v1.0/users" -q '$search="alice"'`
-  - `-p "/v1.0/groups" -q '$search="marketing"'`
-- **Root Personal Drive**: Use `/v1.0/me/drive/root/children` to list all items in the root of the personal drive/space.
+  - `-p '/v1.0/users' -q '$search="alice"'`
+  - `-p '/v1.0/groups' -q '$search="marketing"'`
+- **Root Personal Drive**: Use `'/v1.0/me/drive/root/children'` to list all items in the root of the personal drive/space.
 - **Drives/Spaces**: "Drives" are also referred to as "Spaces". They represent a container for files and folders.
 - **DriveItems/Files/Folders**: "DriveItems" are also referred to as "Files" or "Folders".
 - **Permissions/Shares/Space Members**: "Permissions" are also referred to as "Shares" (on normal files and folders) or "Space Members" (on spaces).
+- **Managing Space Members**: When managing members (=permissions) for a project space, you must use the `v1beta1/drives/{driveId}/root/...` endpoints:
+  - **List members**: Use the `'/v1beta1/drives/{driveId}/root/permissions'` path.
+  - **Add members**: Use the `'/v1beta1/drives/{driveId}/root/invite'` path.
+  - **Remove/Update members**: Use the `'/v1beta1/drives/{driveId}/root/permissions/{permissionId}'` path.
 
 ## Navigation flow
 
