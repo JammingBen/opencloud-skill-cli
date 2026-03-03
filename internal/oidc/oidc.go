@@ -126,8 +126,20 @@ func (c *OIDCClient) Login() error {
 	codeChan := make(chan string)
 	errChan := make(chan error)
 
-	srv := &http.Server{}
-	http.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+	mux := http.NewServeMux()
+	srv := &http.Server{Handler: mux}
+	mux.HandleFunc("/callback", func(w http.ResponseWriter, r *http.Request) {
+		// Check for OAuth error response first
+		if errCode := r.URL.Query().Get("error"); errCode != "" {
+			desc := r.URL.Query().Get("error_description")
+			if desc != "" {
+				errChan <- fmt.Errorf("authentication failed: %s - %s", errCode, desc)
+			} else {
+				errChan <- fmt.Errorf("authentication failed: %s", errCode)
+			}
+			fmt.Fprintf(w, "Authentication failed: %s", errCode)
+			return
+		}
 		code := r.URL.Query().Get("code")
 		if code == "" {
 			errChan <- fmt.Errorf("no code in callback")
