@@ -10,7 +10,6 @@ import (
 	"fmt"
 	"net"
 	"net/http"
-	"path"
 	"strings"
 	"time"
 
@@ -65,19 +64,14 @@ func (c *OIDCClient) Login() error {
 	ctx := context.WithValue(context.Background(), oauth2.HTTPClient, httpClient)
 
 	// Discover OIDC endpoints
-	endpoints, discoveredClientID, err := discoverOIDC(ctx, httpClient, c.ServerURL)
+	endpoints, err := discoverOIDC(ctx, httpClient, c.ServerURL)
 	if err != nil {
 		return fmt.Errorf("failed to discover OIDC configuration: %w", err)
 	}
 
 	clientID := c.ClientID
 	if clientID == "" {
-		// Priority: Flag > discovered > default to desktop client id
-		if discoveredClientID != "" {
-			clientID = discoveredClientID
-		} else {
-			clientID = defaultClientID
-		}
+		clientID = defaultClientID
 	}
 
 	// Generate PKCE verifier and challenge
@@ -192,20 +186,19 @@ func (c *OIDCClient) Login() error {
 	}
 }
 
-// discoverOIDC tries to discover the OIDC metadata URL and client ID using multiple strategies:
+// discoverOIDC tries to discover the OIDC metadata URL using multiple strategies:
 // 1. Fetch config.json from the server and check for OIDC metadata URL or authority.
 // 2. If not found, try the standard .well-known/openid-configuration endpoint.
-// It returns the discovered OIDC metadata, client ID, and any error encountered.
-func discoverOIDC(ctx context.Context, client *http.Client, serverURL string) (*OIDCMetadata, string, error) {
+// It returns the discovered OIDC metadata and any error encountered.
+func discoverOIDC(ctx context.Context, client *http.Client, serverURL string) (*OIDCMetadata, error) {
 	serverURL = strings.TrimSuffix(serverURL, "/")
 
 	// 1. Try config.json
-	configURL := path.Join(serverURL, "config.json")
+	configURL := serverURL + "/config.json"
 	req, _ := http.NewRequestWithContext(ctx, "GET", configURL, nil)
 	resp, err := client.Do(req)
 
 	var metadataURL string
-	clientID := ""
 
 	if err == nil && resp.StatusCode == http.StatusOK {
 		var ocConfig OpenCloudConfig
@@ -214,9 +207,6 @@ func discoverOIDC(ctx context.Context, client *http.Client, serverURL string) (*
 				metadataURL = ocConfig.OpenIdConnect.MetadataURL
 			} else if ocConfig.OpenIdConnect.Authority != "" {
 				metadataURL = strings.TrimSuffix(ocConfig.OpenIdConnect.Authority, "/") + "/.well-known/openid-configuration"
-			}
-			if ocConfig.OpenIdConnect.ClientID != "" {
-				clientID = ocConfig.OpenIdConnect.ClientID
 			}
 		}
 		resp.Body.Close()
@@ -231,20 +221,20 @@ func discoverOIDC(ctx context.Context, client *http.Client, serverURL string) (*
 	req, _ = http.NewRequestWithContext(ctx, "GET", metadataURL, nil)
 	resp, err = client.Do(req)
 	if err != nil {
-		return nil, "", fmt.Errorf("failed to fetch OIDC metadata: %w", err)
+		return nil, fmt.Errorf("failed to fetch OIDC metadata: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, "", fmt.Errorf("OIDC metadata request failed with status: %d", resp.StatusCode)
+		return nil, fmt.Errorf("OIDC metadata request failed with status: %d", resp.StatusCode)
 	}
 
 	var metadata OIDCMetadata
 	if err := json.NewDecoder(resp.Body).Decode(&metadata); err != nil {
-		return nil, "", fmt.Errorf("failed to decode OIDC metadata: %w", err)
+		return nil, fmt.Errorf("failed to decode OIDC metadata: %w", err)
 	}
 
-	return &metadata, clientID, nil
+	return &metadata, nil
 }
 
 // generatePKCE creates a random PKCE verifier and its corresponding challenge.
