@@ -38,6 +38,14 @@ Represents a resource inside a drive. Read-only.
 | `permissions` | permission[] | No | The set of permissions for the item. Read-only. Nullable. |
 | `audio` | [audio](audio.md) | No |  |
 | `video` | [video](video.md) | No |  |
+| `@libre.graph.motionPhoto` | [motionPhoto](motionPhoto.md) | No |  |
 | `@client.synchronize` | boolean | No | Indicates if the item is synchronized with the underlying storage provider. Read-only. |
+| `@microsoft.graph.downloadUrl` | string | No | A pre-authenticated URL that can be used to download the item's content without
+providing an Authorization header. The URL is short-lived and cannot be cached.
+
+This annotation is only populated when explicitly requested via `$select`, and
+only for items that have a `file` facet. The returned URL is valid for a
+limited time and should be used promptly.
+ |
 | `@UI.Hidden` | boolean | No | Properties or facets (see UI.Facet) annotated with this term will not be rendered if the annotation evaluates to true. Users can set this to hide permissions. |
 

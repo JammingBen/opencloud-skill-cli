@@ -7,3 +7,4 @@
 | GET | `/v1beta1/drives/{drive-id}/items/{item-id}` | Get a DriveItem. | [View](../operations/GetDriveItem.md) |
 | DELETE | `/v1beta1/drives/{drive-id}/items/{item-id}` | Delete a DriveItem. | [View](../operations/DeleteDriveItem.md) |
 | PATCH | `/v1beta1/drives/{drive-id}/items/{item-id}` | Update a DriveItem. | [View](../operations/UpdateDriveItem.md) |
+| GET | `/v1beta1/drives/{drive-id}/items/{item-id}/content` | Download the content of a DriveItem | [View](../operations/GetDriveItemContent.md) |
