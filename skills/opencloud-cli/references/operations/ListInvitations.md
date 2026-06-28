@@ -10,3 +10,9 @@
 |--------|-------------|
 | 200 | Retrieved invitations |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | invitation[] | No |  |
+

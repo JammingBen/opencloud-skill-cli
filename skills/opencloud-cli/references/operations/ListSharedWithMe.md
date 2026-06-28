@@ -20,3 +20,9 @@ The `driveItems` returned from the `sharedWithMe` method always include the `rem
 | 200 | OK |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | driveItem[] | No |  |
+

@@ -11,3 +11,9 @@
 | 200 | Retrieved spaces |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | drive[] | No |  |
+

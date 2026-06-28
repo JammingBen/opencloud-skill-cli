@@ -17,3 +17,9 @@
 | 200 | Found activities |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | activity[] | No |  |
+

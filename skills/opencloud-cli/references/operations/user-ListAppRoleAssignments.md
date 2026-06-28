@@ -13,3 +13,10 @@ Represents the global roles a user has been granted for an application.
 | 200 | Retrieved appRoleAssignments |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | appRoleAssignment[] | No |  |
+| `@odata.nextLink` | string | No |  |
+

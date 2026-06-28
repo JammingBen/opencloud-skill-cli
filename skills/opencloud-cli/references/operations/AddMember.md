@@ -18,6 +18,12 @@ Object to be added as member
 
 **Content Types:** `application/json`
 
+**Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `@odata.id` | string | No |  |
+
 ## Responses
 
 | Status | Description |

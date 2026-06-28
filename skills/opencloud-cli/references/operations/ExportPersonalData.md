@@ -16,6 +16,12 @@ destination the file should be created at
 
 **Content Types:** `application/json`
 
+**Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `storageLocation` | string | No | the path where the file should be created in the users personal space |
+
 ## Responses
 
 | Status | Description |

@@ -19,3 +19,10 @@
 | 200 | Retrieved entities |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | group[] | No |  |
+| `@odata.nextLink` | string | No |  |
+

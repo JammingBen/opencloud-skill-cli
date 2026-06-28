@@ -12,6 +12,13 @@ Password change request
 
 **Content Types:** `application/json`
 
+**Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `currentPassword` | string | Yes |  |
+| `newPassword` | string | Yes |  |
+
 ## Responses
 
 | Status | Description |

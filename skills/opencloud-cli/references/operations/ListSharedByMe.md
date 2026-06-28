@@ -20,3 +20,9 @@ The `driveItems` returned from the `sharedByMe` method always include the `permi
 | 200 | OK |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | driveItem[] | No |  |
+

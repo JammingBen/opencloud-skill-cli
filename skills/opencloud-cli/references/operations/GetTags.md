@@ -11,3 +11,9 @@
 | 200 | Retrieved tags |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | string[] | No |  |
+

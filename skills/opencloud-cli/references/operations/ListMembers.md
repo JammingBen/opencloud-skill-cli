@@ -17,3 +17,9 @@
 | 200 | Retrieved group members |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | user[] | No |  |
+

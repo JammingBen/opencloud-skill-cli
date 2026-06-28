@@ -37,3 +37,9 @@ In the request body, provide a JSON object with the following parameters. To cre
 | 400 | Bad request |
 | default | (reference) |
 
+**Success Response Schema** (inline):
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `value` | permission[] | No |  |
+
