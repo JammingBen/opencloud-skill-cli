@@ -25,6 +25,20 @@ git clone git@github.com:JammingBen/opencloud-skill-cli.git
 make install
 ```
 
+### Install Skill
+
+Install the skill so your local AI assistant or agent can use it to interact with OpenCloud using [skills.sh](https://skills.sh):
+
+```sh
+npx skills add JammingBen/opencloud-skill-cli
+```
+
+To install for a specific agent:
+
+```sh
+npx skills add JammingBen/opencloud-skill-cli -a claude-code
+```
+
 ### Login
 
 You need to login to your OpenCloud server to use the CLI or the skill. You can do this using the `login` command:
@@ -47,32 +61,12 @@ When working with a local server that uses self-signed certificates, you can use
 oc-cli login -s https://host.docker.internal:9200 --insecure
 ```
 
-### Install Skill
-
-Install the skill so your local AI assistant or agent can use it to interact with OpenCloud using [skills.sh](https://skills.sh):
-
-```sh
-npx skills add JammingBen/opencloud-skill-cli
-```
-
-To install for a specific agent:
-
-```sh
-npx skills add JammingBen/opencloud-skill-cli -a claude-code
-```
-
 ## Example prompts
 
 - List all my project spaces.
 - List all members of project space "foo".
 - Add Dennis Ritchie as manager to project space "foo".
 - List all files in the root of my personal space.
-
-## Why not use an MCP server?
-
-The OpenCloud CLI is designed to offer a simple and efficient way for local AI assistants and agents to interact with OpenCloud resources. It does not require the overhead of running an MCP server, and can be easily installed and used on any machine.
-
-Additionally, skills are usually more efficient than MCP servers in terms of token usage because they don't need to retrieve tool definitions initially. The CLI's skill reference structure as well as the TOON format used for responses allow for efficient retrieval of necessary information.
 
 ## Development
 
