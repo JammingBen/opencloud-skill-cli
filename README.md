@@ -49,14 +49,16 @@ oc-cli login -s https://host.docker.internal:9200 --insecure
 
 ### Install Skill
 
-Install the skill so your local AI assistant or agent can use it to interact with OpenCloud. You can use the provided `install-skill` command, or download and install the skill manually from this repository.
+Install the skill so your local AI assistant or agent can use it to interact with OpenCloud using [skills.sh](https://skills.sh):
 
 ```sh
-oc-cli install-skill --agent=claude-code
-oc-cli install-skill --agent=github-copilot
-oc-cli install-skill --agent=codex
-oc-cli install-skill --agent=open-code
-oc-cli install-skill --agent=gemini-cli
+npx skills add JammingBen/opencloud-skill-cli
+```
+
+To install for a specific agent:
+
+```sh
+npx skills add JammingBen/opencloud-skill-cli -a claude-code
 ```
 
 ## Example prompts
