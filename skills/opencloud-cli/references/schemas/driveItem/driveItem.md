@@ -39,6 +39,7 @@ Represents a resource inside a drive. Read-only.
 | `audio` | [audio](audio.md) | No |  |
 | `video` | [video](video.md) | No |  |
 | `@libre.graph.motionPhoto` | [motionPhoto](motionPhoto.md) | No |  |
+| `@libre.graph.livePhoto` | [livePhoto](livePhoto.md) | No |  |
 | `@client.synchronize` | boolean | No | Indicates if the item is synchronized with the underlying storage provider. Read-only. |
 | `@microsoft.graph.downloadUrl` | string | No | A pre-authenticated URL that can be used to download the item's content without
 providing an Authorization header. The URL is short-lived and cannot be cached.
@@ -48,4 +49,17 @@ only for items that have a `file` facet. The returned URL is valid for a
 limited time and should be used promptly.
  |
 | `@UI.Hidden` | boolean | No | Properties or facets (see UI.Facet) annotated with this term will not be rendered if the annotation evaluates to true. Users can set this to hide permissions. |
+| `@libre.graph.me.following` | boolean | No | Indicates whether the current user is following this DriveItem. Read-only.
+Use the FollowDriveItem and UnfollowDriveItem operations to change the following state.
+ |
+| `@libre.graph.tags` | string[] | No | The list of tags assigned to this DriveItem. Read-only.
+Use the AssignTags and UnassignTags operations to modify tags.
+ |
+| `@libre.graph.permissions.actions.allowedValues` | string[] | No | A list of actions the caller is allowed to perform on this item.
+
+Only returned when explicitly requested via `$select` on endpoints
+that support it. Mirrors the annotation of the same name on the
+`/permissions` endpoint, allowing clients to learn a caller's
+effective actions on an item without a separate round-trip.
+ |
 

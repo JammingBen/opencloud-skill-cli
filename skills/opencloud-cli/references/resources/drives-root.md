@@ -4,7 +4,7 @@
 
 | Method | Path | Summary | Details |
 |--------|------|---------|----------|
-| POST | `/v1beta1/drives/{drive-id}/root/children` | Create a drive item | [View](../operations/CreateDriveItem.md) |
+| POST | `/v1beta1/drives/{drive-id}/root/children` | Create a new DriveItem at the drive root | [View](../operations/CreateDriveItem.md) |
 | POST | `/v1beta1/drives/{drive-id}/root/createLink` | Create a sharing link for the root item of a Drive | [View](../operations/CreateLinkSpaceRoot.md) |
 | POST | `/v1beta1/drives/{drive-id}/root/invite` | Send a sharing invitation | [View](../operations/InviteSpaceRoot.md) |
 | GET | `/v1beta1/drives/{drive-id}/root/permissions` | List the effective permissions on the root item of a drive. | [View](../operations/ListPermissionsSpaceRoot.md) |
